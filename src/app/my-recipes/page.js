@@ -114,7 +114,7 @@ export default async function MyRecipesDashboard() {
                   </Link>
                   <span className="text-stone-200">·</span>
                   <Link
-                    href={`/my-recipes/recipes/${recipe.id}/edit`}
+                    href={`/my-recipes/${recipe.id}/edit`}
                     className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
                   >
                     Edit

@@ -11,12 +11,13 @@ const SOURCE_LABELS = {
   titles: "recipe title",
   ingredients: "ingredients",
   categories: "category",
+  tags: "tags",
 };
 
 async function runSearch(q, inParam) {
-  const sources = (inParam ?? "titles,ingredients,categories")
+  const sources = (inParam ?? "titles,ingredients,categories,tags")
     .split(",")
-    .filter((s) => ["titles", "ingredients", "categories"].includes(s));
+    .filter((s) => ["titles", "ingredients", "categories", "tags"].includes(s));
 
   const resultMap = new Map();
 
@@ -38,7 +39,7 @@ async function runSearch(q, inParam) {
     category: true,
   };
 
-  const [titleResults, ingredientResults, categoryResults] = await Promise.all([
+  const [titleResults, ingredientResults, categoryResults, tagResults] = await Promise.all([
     sources.includes("titles")
       ? prisma.recipe.findMany({
           where: { ...base, title: { contains: q, mode: "insensitive" } },
@@ -72,11 +73,22 @@ async function runSearch(q, inParam) {
           orderBy: { sortOrder: "asc" },
         })
       : [],
+    sources.includes("tags")
+      ? prisma.recipe.findMany({
+          where: {
+            ...base,
+            tags: { some: { name: { contains: q, mode: "insensitive" } } },
+          },
+          include,
+          orderBy: { sortOrder: "asc" },
+        })
+      : [],
   ]);
 
   merge(titleResults, "titles");
   merge(ingredientResults, "ingredients");
   merge(categoryResults, "categories");
+  merge(tagResults, "tags");
 
   return [...resultMap.values()];
 }

@@ -6,6 +6,7 @@ const FILTERS = [
   { value: "titles", label: "Recipe titles" },
   { value: "ingredients", label: "Ingredients" },
   { value: "categories", label: "Categories" },
+  { value: "tags", label: "Tags" },
 ];
 
 export default function SearchForm() {
@@ -17,7 +18,7 @@ export default function SearchForm() {
   const activeSet = new Set(
     hasInParam
       ? (searchParams.get("in") ?? "").split(",").filter(Boolean)
-      : ["titles", "ingredients", "categories"]
+      : ["titles", "ingredients", "categories", "tags"]
   );
 
   function handleSubmit(e) {
