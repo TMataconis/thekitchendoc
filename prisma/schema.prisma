@@ -1,0 +1,102 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  sortOrder Int      @default(0)
+  recipes   Recipe[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  slug    String   @unique
+  recipes Recipe[]
+
+  @@map("tags")
+}
+
+model Recipe {
+  id          Int     @id @default(autoincrement())
+  title       String
+  slug        String  @unique
+  servings    String  @default("")
+  notes       String  @default("")
+  sortOrder   Int     @default(0)
+  isVariation Boolean @default(false)
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  parentRecipeId Int?
+  parentRecipe   Recipe?  @relation("RecipeVariations", fields: [parentRecipeId], references: [id])
+  variations     Recipe[] @relation("RecipeVariations")
+
+  tags              Tag[]
+  ingredientGroups  IngredientGroup[]
+  instructionGroups InstructionGroup[]
+
+  @@map("recipes")
+}
+
+model IngredientGroup {
+  id          Int          @id @default(autoincrement())
+  name        String       @default("")
+  sortOrder   Int          @default(0)
+  recipeId    Int
+  recipe      Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredients Ingredient[]
+
+  @@map("ingredient_groups")
+}
+
+model Ingredient {
+  id        Int             @id @default(autoincrement())
+  amount    String          @default("")
+  unit      String          @default("")
+  name      String
+  note      String          @default("")
+  sortOrder Int             @default(0)
+  groupId   Int
+  group     IngredientGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("ingredients")
+}
+
+model InstructionGroup {
+  id           Int           @id @default(autoincrement())
+  name         String        @default("")
+  sortOrder    Int           @default(0)
+  recipeId     Int
+  recipe       Recipe        @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  instructions Instruction[]
+
+  @@map("instruction_groups")
+}
+
+model Instruction {
+  id         Int    @id @default(autoincrement())
+  stepNumber Int
+  stepLabel  String @default("")
+  text       String
+  sortOrder  Int    @default(0)
+
+  groupId Int
+  group   InstructionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  parentInstructionId Int?
+  parentInstruction   Instruction?  @relation("SubSteps", fields: [parentInstructionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subSteps            Instruction[] @relation("SubSteps")
+
+  @@map("instructions")
+}
