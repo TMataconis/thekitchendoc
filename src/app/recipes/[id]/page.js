@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import FavoriteButton from "./FavoriteButton";
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
@@ -40,11 +41,19 @@ export default async function RecipePage({ params }) {
               orderBy: { sortOrder: "asc" },
               where: { parentRecipeId: Number(id) },
             },
+            favorites: {
+              where: { userId: session.user.id },
+              take: 1,
+            },
           }),
     },
   });
 
   if (!recipe) notFound();
+
+  const isFavorited = session
+    ? (recipe.favorites?.length ?? 0) > 0
+    : false;
 
   const topLevelInstructions = (instructions) =>
     instructions.filter((i) => i.parentInstructionId === null);
@@ -128,6 +137,10 @@ export default async function RecipePage({ params }) {
                     {tag.name}
                   </span>
                 ))}
+                <FavoriteButton
+                  recipeId={recipe.id}
+                  initialFavorited={isFavorited}
+                />
               </div>
 
               {recipe.notes && (

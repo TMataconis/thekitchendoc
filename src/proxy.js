@@ -10,7 +10,6 @@ export const proxy = auth(function (req) {
     return;
   }
 
-  // Admin routes: require an authenticated ADMIN or CONTRIBUTOR.
   const session = req.auth;
 
   if (!session) {
@@ -19,12 +18,17 @@ export const proxy = auth(function (req) {
     return NextResponse.redirect(signInUrl);
   }
 
-  const role = session.user?.role;
-  if (role !== "ADMIN" && role !== "CONTRIBUTOR") {
-    return new NextResponse("Forbidden", { status: 403 });
+  // Admin routes: require ADMIN or CONTRIBUTOR.
+  if (pathname.startsWith("/admin")) {
+    const role = session.user?.role;
+    if (role !== "ADMIN" && role !== "CONTRIBUTOR") {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
   }
+
+  // /my-recipes: any authenticated user may enter; pages enforce role limits.
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/recipes/:path*"],
+  matcher: ["/admin/:path*", "/my-recipes/:path*", "/recipes/:path*"],
 };
