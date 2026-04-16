@@ -50,24 +50,35 @@ export default async function RecipePage({ params }) {
   return (
     <div className="min-h-screen bg-amber-50">
       <header className="border-b border-amber-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-6 py-4 flex items-baseline gap-2 flex-wrap">
+        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-baseline gap-2 flex-wrap min-w-0">
+            <Link
+              href="/"
+              className="text-2xl font-bold tracking-tight text-stone-800 hover:text-amber-700 transition-colors flex-shrink-0"
+            >
+              The Kitchen Doc
+            </Link>
+            <span className="text-stone-400 text-sm flex-shrink-0">/</span>
+            <Link
+              href={`/categories/${recipe.category.id}`}
+              className="text-sm text-stone-500 hover:text-amber-700 transition-colors flex-shrink-0"
+            >
+              {recipe.category.name}
+            </Link>
+            <span className="text-stone-400 text-sm flex-shrink-0">/</span>
+            <span className="text-sm text-stone-400 truncate max-w-[180px]">
+              {recipe.title}
+            </span>
+          </div>
           <Link
-            href="/"
-            className="text-2xl font-bold tracking-tight text-stone-800 hover:text-amber-700 transition-colors"
+            href="/search"
+            aria-label="Search"
+            className="ml-3 flex-shrink-0 rounded-lg p-2 text-stone-400 hover:bg-amber-100 hover:text-amber-700 transition-colors"
           >
-            The Kitchen Doc
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
           </Link>
-          <span className="text-stone-400 text-sm">/</span>
-          <Link
-            href={`/categories/${recipe.category.id}`}
-            className="text-sm text-stone-500 hover:text-amber-700 transition-colors"
-          >
-            {recipe.category.name}
-          </Link>
-          <span className="text-stone-400 text-sm">/</span>
-          <span className="text-sm text-stone-400 truncate max-w-[180px]">
-            {recipe.title}
-          </span>
         </div>
       </header>
 
