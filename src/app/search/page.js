@@ -90,21 +90,6 @@ export default async function SearchPage({ searchParams }) {
 
   return (
     <div className="min-h-screen bg-amber-50">
-      <header className="border-b border-amber-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-baseline gap-3">
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tight text-stone-800 hover:text-amber-700 transition-colors"
-            >
-              The Kitchen Doc
-            </Link>
-            <span className="text-stone-400 text-sm">/</span>
-            <span className="text-sm text-stone-400">Search</span>
-          </div>
-        </div>
-      </header>
-
       <main className="max-w-3xl mx-auto px-6 py-14">
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-stone-800 tracking-tight mb-6">

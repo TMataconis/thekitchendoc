@@ -5,7 +5,25 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  CONTRIBUTOR
+  VIEWER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  image     String?
+  role      Role     @default(VIEWER)
+  createdAt DateTime @default(now())
+  recipes   Recipe[]
+
+  @@map("users")
 }
 
 model Category {
@@ -41,6 +59,9 @@ model Recipe {
   parentRecipeId Int?
   parentRecipe   Recipe?  @relation("RecipeVariations", fields: [parentRecipeId], references: [id])
   variations     Recipe[] @relation("RecipeVariations")
+
+  createdById Int?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
 
   tags              Tag[]
   ingredientGroups  IngredientGroup[]

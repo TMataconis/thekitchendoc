@@ -26,30 +26,6 @@ export default async function CategoryPage({ params }) {
 
   return (
     <div className="min-h-screen bg-amber-50">
-      <header className="border-b border-amber-200 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <Link
-              href="/"
-              className="text-2xl font-bold tracking-tight text-stone-800 hover:text-amber-700 transition-colors"
-            >
-              The Kitchen Doc
-            </Link>
-            <span className="text-stone-400 text-sm">/</span>
-            <span className="text-stone-500 text-sm">{category.name}</span>
-          </div>
-          <Link
-            href="/search"
-            aria-label="Search"
-            className="rounded-lg p-2 text-stone-400 hover:bg-amber-100 hover:text-amber-700 transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-            </svg>
-          </Link>
-        </div>
-      </header>
-
       <main className="max-w-5xl mx-auto px-6 py-14">
         <div className="mb-10">
           <h1 className="text-3xl font-bold text-stone-800 tracking-tight">
