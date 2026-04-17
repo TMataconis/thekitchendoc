@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import UserMenu from "./UserMenu";
 import HeaderSearch from "./HeaderSearch";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import PreviewBanner from "./PreviewBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,6 +62,9 @@ export default async function RootLayout({ children }) {
           </div>
         </header>
 
+        {session?.user?.realRole === "ADMIN" && session.user.role !== session.user.realRole && (
+          <PreviewBanner role={session.user.role} />
+        )}
         {children}
       </body>
     </html>

@@ -18,10 +18,10 @@ export const proxy = auth(function (req) {
     return NextResponse.redirect(signInUrl);
   }
 
-  // Admin routes: require ADMIN or CONTRIBUTOR.
+  // Admin routes: use realRole so preview mode never locks out a real ADMIN.
   if (pathname.startsWith("/admin")) {
-    const role = session.user?.role;
-    if (role !== "ADMIN" && role !== "CONTRIBUTOR") {
+    const realRole = session.user?.realRole ?? session.user?.role;
+    if (realRole !== "ADMIN" && realRole !== "CONTRIBUTOR") {
       return new NextResponse("Forbidden", { status: 403 });
     }
   }

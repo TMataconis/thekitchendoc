@@ -1,12 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { setRolePreview } from "@/app/actions/setRolePreview";
 
 export default function UserMenu({ user }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const router = useRouter();
+  const [previewPending, startPreviewTransition] = useTransition();
+
+  function handlePreview(role) {
+    setOpen(false);
+    startPreviewTransition(async () => {
+      await setRolePreview(role);
+      router.refresh();
+    });
+  }
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -82,7 +94,7 @@ export default function UserMenu({ user }) {
             My Recipes
           </Link>
 
-          {user.role === "ADMIN" && (
+          {user.realRole === "ADMIN" && (
             <Link
               href="/admin"
               onClick={() => setOpen(false)}
@@ -93,6 +105,61 @@ export default function UserMenu({ user }) {
               </svg>
               Admin
             </Link>
+          )}
+
+          {user.realRole === "ADMIN" && (
+            <>
+              <div className="my-1.5 border-t border-amber-100" />
+              <p className="px-4 pt-1 pb-0.5 text-xs font-semibold uppercase tracking-widest text-stone-400">
+                Preview as
+              </p>
+              {user.role !== "CONTRIBUTOR" ? (
+                <button
+                  onClick={() => handlePreview("CONTRIBUTOR")}
+                  disabled={previewPending}
+                  className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-stone-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  Contributor
+                </button>
+              ) : (
+                <button
+                  onClick={() => handlePreview(null)}
+                  disabled={previewPending}
+                  className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                  Contributor ✓
+                </button>
+              )}
+              {user.role !== "VIEWER" ? (
+                <button
+                  onClick={() => handlePreview("VIEWER")}
+                  disabled={previewPending}
+                  className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-stone-600 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                  </svg>
+                  Viewer
+                </button>
+              ) : (
+                <button
+                  onClick={() => handlePreview(null)}
+                  disabled={previewPending}
+                  className="flex w-full items-center gap-2.5 px-4 py-2 text-sm text-amber-700 hover:bg-amber-50 transition-colors disabled:opacity-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                  </svg>
+                  Viewer ✓
+                </button>
+              )}
+            </>
           )}
 
           <div className="my-1.5 border-t border-amber-100" />

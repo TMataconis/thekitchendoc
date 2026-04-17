@@ -59,7 +59,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
     async session({ session, token }) {
       session.user.id = token.id;
-      session.user.role = token.role;
+      session.user.realRole = token.role; // always the real DB role
+
+      // Apply role preview for ADMINs — read cookie at request time
+      let previewRole = null;
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        const raw = cookieStore.get("role_preview")?.value;
+        if (token.role === "ADMIN" && ["CONTRIBUTOR", "VIEWER"].includes(raw)) {
+          previewRole = raw;
+        }
+      } catch {
+        // cookies() unavailable in Edge runtime — fall back to real role
+      }
+
+      session.user.role = previewRole ?? token.role;
       return session;
     },
   },
