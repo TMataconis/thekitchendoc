@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/admin", label: "Dashboard", icon: "▦" },
-  { href: "/admin/recipes", label: "All Recipes", icon: "📄" },
-  { href: "/admin/categories", label: "Categories", icon: "🗂" },
-  { href: "/admin/users", label: "Users", icon: "👥" },
+  { href: "/admin", label: "Dashboard", shortLabel: "Home", icon: "▦" },
+  { href: "/admin/recipes", label: "All Recipes", shortLabel: "Recipes", icon: "📄" },
+  { href: "/admin/categories", label: "Categories", shortLabel: "Categories", icon: "🗂" },
+  { href: "/admin/users", label: "Users", shortLabel: "Users", icon: "👥" },
 ];
 
 export default function AdminNav({ variant = "sidebar" }) {
@@ -15,22 +15,22 @@ export default function AdminNav({ variant = "sidebar" }) {
 
   if (variant === "tabs") {
     return (
-      <div className="flex overflow-x-auto scrollbar-none gap-1 px-3 py-2">
-        {links.map(({ href, label, icon }) => {
+      <div className="flex w-full">
+        {links.map(({ href, shortLabel, icon }) => {
           const active =
             href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
           return (
             <Link
               key={href}
               href={href}
-              className={`flex-shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 px-1 text-xs font-medium transition-colors ${
                 active
-                  ? "bg-amber-100 text-amber-700"
-                  : "text-stone-600 hover:bg-stone-100 hover:text-stone-800"
+                  ? "text-amber-700 border-b-2 border-amber-500"
+                  : "text-stone-500 border-b-2 border-transparent hover:text-stone-800"
               }`}
             >
-              <span className="text-sm leading-none">{icon}</span>
-              {label}
+              <span className="text-base leading-none">{icon}</span>
+              <span>{shortLabel}</span>
             </Link>
           );
         })}
