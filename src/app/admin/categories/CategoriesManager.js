@@ -92,8 +92,10 @@ function SortableRow({
       </div>
 
       {isEditing ? (
-        <>
-          <div className="px-3 py-2 flex-1 min-w-0">
+        /* ── Edit mode ── */
+        <div className="flex-1 min-w-0 py-2 pr-3">
+          {/* Mobile: stacked */}
+          <div className="flex flex-col gap-2 md:hidden">
             <input
               type="text"
               value={editValues.name}
@@ -105,22 +107,7 @@ function SortableRow({
                 if (e.key === "Escape") onCancelEdit();
               }}
             />
-          </div>
-          <div className="px-3 py-2 w-28 flex-shrink-0">
-            <input
-              type="number"
-              value={editValues.sortOrder}
-              onChange={(e) =>
-                setEditValues((v) => ({ ...v, sortOrder: e.target.value }))
-              }
-              className={`${inputCls} w-20`}
-            />
-          </div>
-          <div className="px-3 py-2 w-24 flex-shrink-0 text-stone-400 tabular-nums text-sm">
-            {cat.recipeCount}
-          </div>
-          <div className="px-3 py-2 w-32 flex-shrink-0 flex justify-end">
-            <div className="inline-flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <button
                 onClick={onSaveEdit}
                 disabled={savePending}
@@ -136,20 +123,63 @@ function SortableRow({
               </button>
             </div>
           </div>
-        </>
+          {/* Desktop: inline columns */}
+          <div className="hidden md:flex md:items-center">
+            <div className="px-3 py-0 flex-1 min-w-0">
+              <input
+                type="text"
+                value={editValues.name}
+                onChange={(e) => setEditValues((v) => ({ ...v, name: e.target.value }))}
+                className={`${inputCls} w-full`}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onSaveEdit();
+                  if (e.key === "Escape") onCancelEdit();
+                }}
+              />
+            </div>
+            <div className="px-3 py-0 w-28 flex-shrink-0">
+              <input
+                type="number"
+                value={editValues.sortOrder}
+                onChange={(e) =>
+                  setEditValues((v) => ({ ...v, sortOrder: e.target.value }))
+                }
+                className={`${inputCls} w-20`}
+              />
+            </div>
+            <div className="px-3 py-0 w-24 flex-shrink-0 text-stone-400 tabular-nums text-sm">
+              {cat.recipeCount}
+            </div>
+            <div className="px-3 py-0 w-32 flex-shrink-0 flex justify-end">
+              <div className="inline-flex items-center gap-3">
+                <button
+                  onClick={onSaveEdit}
+                  disabled={savePending}
+                  className="text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors disabled:opacity-50"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={onCancelEdit}
+                  className="text-xs text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
+        /* ── View mode ── */
         <>
-          <div className="px-3 py-3 flex-1 min-w-0 font-medium text-stone-800 text-sm truncate">
-            {cat.name}
-          </div>
-          <div className="px-3 py-3 w-28 flex-shrink-0 text-stone-500 tabular-nums text-sm">
-            {cat.sortOrder}
-          </div>
-          <div className="px-3 py-3 w-24 flex-shrink-0 text-stone-500 tabular-nums text-sm">
-            {cat.recipeCount}
-          </div>
-          <div className="px-3 py-3 w-32 flex-shrink-0 flex justify-end">
-            <div className="inline-flex items-center gap-3">
+          {/* Mobile: card body — name + recipe count + actions stacked */}
+          <div className="flex-1 min-w-0 py-3 pr-3 md:hidden">
+            <p className="font-medium text-stone-800 text-sm leading-snug">{cat.name}</p>
+            <p className="text-xs text-stone-400 mt-0.5">
+              {cat.recipeCount} recipe{cat.recipeCount === 1 ? "" : "s"}
+            </p>
+            <div className="flex items-center gap-3 mt-2">
               <button
                 onClick={() => onStartEdit(cat)}
                 className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
@@ -157,10 +187,7 @@ function SortableRow({
                 Edit
               </button>
               {cat.recipeCount > 0 ? (
-                <span
-                  title="Has recipes — cannot delete"
-                  className="cursor-not-allowed text-xs text-stone-300"
-                >
+                <span title="Has recipes — cannot delete" className="cursor-not-allowed text-xs text-stone-300">
                   Delete
                 </span>
               ) : (
@@ -172,6 +199,45 @@ function SortableRow({
                   Delete
                 </button>
               )}
+            </div>
+          </div>
+
+          {/* Desktop: inline columns */}
+          <div className="hidden md:flex md:flex-1 md:items-center">
+            <div className="px-3 py-3 flex-1 min-w-0 font-medium text-stone-800 text-sm truncate">
+              {cat.name}
+            </div>
+            <div className="px-3 py-3 w-28 flex-shrink-0 text-stone-500 tabular-nums text-sm">
+              {cat.sortOrder}
+            </div>
+            <div className="px-3 py-3 w-24 flex-shrink-0 text-stone-500 tabular-nums text-sm">
+              {cat.recipeCount}
+            </div>
+            <div className="px-3 py-3 w-32 flex-shrink-0 flex justify-end">
+              <div className="inline-flex items-center gap-3">
+                <button
+                  onClick={() => onStartEdit(cat)}
+                  className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
+                >
+                  Edit
+                </button>
+                {cat.recipeCount > 0 ? (
+                  <span
+                    title="Has recipes — cannot delete"
+                    className="cursor-not-allowed text-xs text-stone-300"
+                  >
+                    Delete
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => onDelete(cat.id)}
+                    disabled={savePending}
+                    className="text-xs text-stone-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </>
