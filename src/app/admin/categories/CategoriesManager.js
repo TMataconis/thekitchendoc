@@ -361,7 +361,7 @@ export default function CategoriesManager({ categories: initial }) {
 
       <div className="rounded-xl border border-stone-200 bg-white overflow-hidden">
         {/* Header row */}
-        <div className="flex items-center bg-stone-50 border-b border-stone-200">
+        <div className="hidden md:flex items-center bg-stone-50 border-b border-stone-200">
           <div className="pl-3 pr-1 py-3 w-8 flex-shrink-0" />
           <div className="px-3 py-3 flex-1 text-left text-xs font-semibold uppercase tracking-widest text-stone-400">
             Name
