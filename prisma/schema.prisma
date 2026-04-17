@@ -51,6 +51,7 @@ model Recipe {
   slug        String  @unique
   servings    String  @default("")
   notes       String  @default("")
+  imageUrl  String?  @default("")
   sortOrder   Int     @default(0)
   isVariation Boolean @default(false)
 

@@ -52,6 +52,7 @@ export default async function EditPage({ params }) {
     title: recipe.title,
     servings: recipe.servings,
     notes: recipe.notes,
+    imageUrl: recipe.imageUrl ?? "",
     categoryId: String(recipe.categoryId),
     tags: recipe.tags.map((t) => t.name),
     ingredientGroups: recipe.ingredientGroups.map((g) => ({
@@ -78,11 +79,16 @@ export default async function EditPage({ params }) {
     })),
   };
 
+  const canDelete =
+    role === "ADMIN" ||
+    (role === "CONTRIBUTOR" && recipe.createdById === userId);
+
   return (
     <EditRecipePage
       recipeId={recipeId}
       initial={initial}
       categories={categories}
+      canDelete={canDelete}
     />
   );
 }

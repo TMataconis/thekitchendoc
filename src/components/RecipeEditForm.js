@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { uploadImage } from "@/app/actions/uploadImage";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -26,12 +27,37 @@ function emptyRecipe() {
     title: "",
     servings: "",
     notes: "",
+    imageUrl: "",
     categoryId: "",
     tagInput: "",
     tags: [],
     ingredientGroups: [emptyIngredientGroup()],
     instructionGroups: [emptyInstructionGroup()],
   };
+}
+
+// ── Image resize helper (Canvas API) ──────────────────────────────────────────
+
+const MAX_WIDTH = 1200;
+
+function resizeToBlob(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const scale = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Canvas toBlob failed")), "image/jpeg", 0.85);
+    };
+    img.onerror = reject;
+    img.src = objectUrl;
+  });
 }
 
 // ── Primitives ────────────────────────────────────────────────────────────────
@@ -124,10 +150,49 @@ export default function RecipeEditForm({ initial, categories, onSave, heading, o
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
+  // ── Image state ──
+  const [imageFile, setImageFile] = useState(null);      // resized Blob pending upload
+  const [imagePreview, setImagePreview] = useState(      // data URL shown in UI
+    initial?.imageUrl || null
+  );
+  const [imageError, setImageError] = useState(null);
+  const fileInputRef = useRef(null);
+
   // ── Generic field setter ──
 
   function set(field, value) {
     setRecipe((r) => ({ ...r, [field]: value }));
+  }
+
+  // ── Image ──
+
+  async function handleImageChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageError(null);
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      setImageError("Only JPEG, PNG, and WebP images are allowed.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError("Image must be under 5 MB.");
+      return;
+    }
+    try {
+      const resized = await resizeToBlob(file);
+      setImageFile(resized);
+      setImagePreview(URL.createObjectURL(resized));
+    } catch {
+      setImageError("Could not process image. Please try another file.");
+    }
+  }
+
+  function handleRemoveImage() {
+    setImageFile(null);
+    setImagePreview(null);
+    set("imageUrl", "");
+    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   // ── Tags ──
@@ -325,10 +390,27 @@ export default function RecipeEditForm({ initial, categories, onSave, heading, o
   async function handleSave() {
     setSaveError(null);
     setSaving(true);
+
+    let resolvedImageUrl = recipe.imageUrl ?? "";
+
+    if (imageFile) {
+      const fd = new FormData();
+      fd.append("image", imageFile, "upload.jpg");
+      fd.append("recipeSlug", recipe.title || "recipe");
+      const uploadResult = await uploadImage(fd);
+      if (uploadResult.error) {
+        setSaveError(`Image upload failed: ${uploadResult.error}`);
+        setSaving(false);
+        return;
+      }
+      resolvedImageUrl = uploadResult.url;
+    }
+
     const result = await onSave({
       title: recipe.title,
       servings: recipe.servings,
       notes: recipe.notes,
+      imageUrl: resolvedImageUrl,
       categoryId: recipe.categoryId,
       tags: recipe.tags,
       ingredientGroups: recipe.ingredientGroups,
@@ -377,6 +459,76 @@ export default function RecipeEditForm({ initial, categories, onSave, heading, o
           {saveError}
         </p>
       )}
+
+      {/* ── Image upload ── */}
+      <div className={sectionClass}>
+        <FieldLabel>Photo</FieldLabel>
+
+        {imagePreview ? (
+          <div className="space-y-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imagePreview}
+              alt="Recipe preview"
+              className="w-full max-h-64 object-cover rounded-lg border border-stone-200"
+            />
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
+              >
+                Replace image
+              </button>
+              <span className="text-stone-200">·</span>
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="text-xs text-stone-400 hover:text-red-500 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full rounded-lg border-2 border-dashed border-stone-200 bg-stone-50 px-6 py-10 text-center hover:border-amber-300 hover:bg-amber-50 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mx-auto mb-2 text-stone-300"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <p className="text-sm text-stone-400">Click to upload a photo</p>
+            <p className="mt-1 text-xs text-stone-300">JPEG, PNG, WebP · max 5 MB · resized to 1200px</p>
+          </button>
+        )}
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleImageChange}
+          className="hidden"
+        />
+
+        {imageError && (
+          <p className="mt-2 text-xs text-red-600">{imageError}</p>
+        )}
+      </div>
 
       {/* ── Basic info ── */}
       <div className={sectionClass}>

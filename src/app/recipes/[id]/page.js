@@ -64,30 +64,35 @@ export default async function RecipePage({ params }) {
         {/* ── Locked state ── */}
         {!session && (
           <div>
-            {/* Visible metadata */}
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold text-stone-800 tracking-tight leading-tight">
-                {recipe.title}
-              </h1>
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-sm text-stone-500">
-                  {recipe.category.name}
+            {recipe.imageUrl && (
+              <img
+                src={recipe.imageUrl}
+                alt={recipe.title}
+                className="w-full rounded-2xl shadow-sm mb-6 md:float-right md:w-[45%] md:ml-6 md:mb-4"
+              />
+            )}
+            <h1 className="text-4xl font-bold text-stone-800 tracking-tight leading-tight">
+              {recipe.title}
+            </h1>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-sm text-stone-500">
+                {recipe.category.name}
+              </span>
+              {recipe.servings && (
+                <span className="inline-flex items-center rounded-full bg-amber-100 border border-amber-200 px-3 py-1 text-sm font-medium text-amber-800">
+                  {recipe.servings}
                 </span>
-                {recipe.servings && (
-                  <span className="inline-flex items-center rounded-full bg-amber-100 border border-amber-200 px-3 py-1 text-sm font-medium text-amber-800">
-                    {recipe.servings}
-                  </span>
-                )}
-                {recipe.tags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="inline-flex items-center rounded-full bg-white border border-stone-200 px-3 py-1 text-sm text-stone-500"
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-              </div>
+              )}
+              {recipe.tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="inline-flex items-center rounded-full bg-white border border-stone-200 px-3 py-1 text-sm text-stone-500"
+                >
+                  {tag.name}
+                </span>
+              ))}
             </div>
+            <div className="clear-both" />
 
             {/* Lock card */}
             <div className="rounded-2xl border border-amber-100 bg-white px-8 py-14 text-center shadow-sm">
@@ -116,67 +121,74 @@ export default async function RecipePage({ params }) {
 
         {/* ── Full recipe (authenticated) ── */}
         {session && (
-          <div className="space-y-12">
+          <div className="after:content-[''] after:block after:clear-both">
+            {/* Float image — right on md+, stacked on mobile */}
+            {recipe.imageUrl && (
+              <img
+                src={recipe.imageUrl}
+                alt={recipe.title}
+                className="w-full rounded-2xl shadow-sm mb-6 md:float-right md:w-[45%] md:ml-6 md:mb-4"
+              />
+            )}
+
             {/* Title + meta */}
-            <div>
-              <h1 className="text-4xl font-bold text-stone-800 tracking-tight leading-tight">
-                {recipe.title}
-              </h1>
+            <h1 className="text-4xl font-bold text-stone-800 tracking-tight leading-tight">
+              {recipe.title}
+            </h1>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                {recipe.servings && (
-                  <span className="inline-flex items-center rounded-full bg-amber-100 border border-amber-200 px-3 py-1 text-sm font-medium text-amber-800">
-                    {recipe.servings}
-                  </span>
-                )}
-                {recipe.tags.map((tag) => (
-                  <span
-                    key={tag.id}
-                    className="inline-flex items-center rounded-full bg-white border border-stone-200 px-3 py-1 text-sm text-stone-500"
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {recipe.servings && (
+                <span className="inline-flex items-center rounded-full bg-amber-100 border border-amber-200 px-3 py-1 text-sm font-medium text-amber-800">
+                  {recipe.servings}
+                </span>
+              )}
+              {recipe.tags.map((tag) => (
+                <span
+                  key={tag.id}
+                  className="inline-flex items-center rounded-full bg-white border border-stone-200 px-3 py-1 text-sm text-stone-500"
+                >
+                  {tag.name}
+                </span>
+              ))}
+              <FavoriteButton
+                recipeId={recipe.id}
+                initialFavorited={isFavorited}
+              />
+              {(session.user.role === "ADMIN" ||
+                (session.user.role === "CONTRIBUTOR" &&
+                  recipe.createdById === session.user.id)) && (
+                <Link
+                  href={`/my-recipes/${recipe.id}/edit`}
+                  className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    {tag.name}
-                  </span>
-                ))}
-                <FavoriteButton
-                  recipeId={recipe.id}
-                  initialFavorited={isFavorited}
-                />
-                {(session.user.role === "ADMIN" ||
-                  (session.user.role === "CONTRIBUTOR" &&
-                    recipe.createdById === session.user.id)) && (
-                  <Link
-                    href={`/my-recipes/${recipe.id}/edit`}
-                    className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition-colors"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="13"
-                      height="13"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    Edit
-                  </Link>
-                )}
-              </div>
-
-              {recipe.notes && (
-                <p className="mt-5 text-stone-500 text-sm leading-relaxed border-l-2 border-amber-300 pl-4">
-                  {recipe.notes}
-                </p>
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
+                  Edit
+                </Link>
               )}
             </div>
 
+            {recipe.notes && (
+              <p className="mt-5 text-stone-500 text-sm leading-relaxed border-l-2 border-amber-300 pl-4">
+                {recipe.notes}
+              </p>
+            )}
+
             {/* Ingredients */}
             {recipe.ingredientGroups.length > 0 && (
-              <section>
+              <section className="mt-12">
                 <h2 className="text-xl font-bold text-stone-800 mb-5">
                   Ingredients
                 </h2>
@@ -212,7 +224,7 @@ export default async function RecipePage({ params }) {
 
             {/* Instructions */}
             {recipe.instructionGroups.length > 0 && (
-              <section>
+              <section className="mt-12">
                 <h2 className="text-xl font-bold text-stone-800 mb-5">
                   Instructions
                 </h2>
@@ -263,7 +275,7 @@ export default async function RecipePage({ params }) {
 
             {/* Variations */}
             {recipe.variations.length > 0 && (
-              <section>
+              <section className="mt-12">
                 <h2 className="text-xl font-bold text-stone-800 mb-5">
                   Variations
                 </h2>

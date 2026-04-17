@@ -37,6 +37,7 @@ const SaveRecipeSchema = z.object({
   title: z.string().min(1, "Title is required"),
   servings: z.string().default(""),
   notes: z.string().default(""),
+  imageUrl: z.string().default(""),
   categoryId: z.coerce.number().int().positive("Category is required"),
   tags: z.array(z.string()).default([]),
   ingredientGroups: z.array(IngredientGroupSchema).default([]),
@@ -116,7 +117,7 @@ export async function saveRecipe(formData) {
     return { error: first?.message ?? "Validation error." };
   }
 
-  const { title, servings, notes, categoryId, tags, ingredientGroups, instructionGroups } =
+  const { title, servings, notes, imageUrl, categoryId, tags, ingredientGroups, instructionGroups } =
     parsed.data;
 
   try {
@@ -141,6 +142,7 @@ export async function saveRecipe(formData) {
           slug,
           servings,
           notes,
+          imageUrl,
           sortOrder: 0,
           categoryId,
           createdById: userId,
