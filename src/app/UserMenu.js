@@ -34,7 +34,7 @@ export default function UserMenu({ user }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2.5 rounded-full pl-1 pr-3 py-1 hover:bg-amber-100 transition-colors"
+        className="flex items-center gap-2.5 rounded-full pl-1 md:pr-3 py-1 hover:bg-amber-100 transition-colors"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -51,7 +51,8 @@ export default function UserMenu({ user }) {
             {(user.name ?? user.email ?? "?")[0].toUpperCase()}
           </span>
         )}
-        <span className="text-sm font-medium text-stone-700 max-w-[120px] truncate">
+        {/* Name and chevron — desktop only */}
+        <span className="hidden md:inline text-sm font-medium text-stone-700 max-w-[120px] truncate">
           {user.name ?? user.email}
         </span>
         <svg
@@ -64,7 +65,7 @@ export default function UserMenu({ user }) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`text-stone-400 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`hidden md:block text-stone-400 transition-transform ${open ? "rotate-180" : ""}`}
         >
           <path d="m6 9 6 6 6-6" />
         </svg>
