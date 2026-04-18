@@ -108,7 +108,13 @@ export default async function CategoryPage({ params }) {
 
                 {/* Variations sub-grid */}
                 {recipe.variations.length > 0 && (
-                  <div className="mt-3 ml-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className={`mt-3 ml-6 grid gap-3 ${
+                    recipe.variations.length === 1
+                      ? "grid-cols-1 max-w-sm"
+                      : recipe.variations.length === 2
+                      ? "grid-cols-2"
+                      : "grid-cols-3"
+                  }`}>
                     {recipe.variations.map((v) => (
                       <Link
                         key={v.id}
