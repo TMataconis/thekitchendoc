@@ -15,6 +15,11 @@ export default async function TagsPage() {
     <div className="min-h-screen bg-amber-50">
       <main className="max-w-5xl mx-auto px-6 py-14">
         <div className="mb-10">
+          <nav className="mb-3">
+            <Link href="/" className="text-sm text-amber-600 hover:text-amber-700 transition-colors">
+              ← Home
+            </Link>
+          </nav>
           <h1 className="text-3xl font-bold text-stone-800 tracking-tight">
             Browse Tags
           </h1>

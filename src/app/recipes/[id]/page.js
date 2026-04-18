@@ -61,6 +61,15 @@ export default async function RecipePage({ params }) {
   return (
     <div className="min-h-screen bg-amber-50">
       <main className="max-w-3xl mx-auto px-6 py-14">
+        <nav className="mb-6">
+          <Link
+            href={`/categories/${recipe.category.id}`}
+            className="text-sm text-amber-600 hover:text-amber-700 transition-colors"
+          >
+            ← {recipe.category.name}
+          </Link>
+        </nav>
+
         {/* ── Locked state ── */}
         {!session && (
           <div>
