@@ -83,6 +83,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.includes("/api/auth/callback/resend")) {
+        return baseUrl + "/auth/success";
+      }
+      return baseUrl;
+    },
+
     async signIn({ user, account }) {
       if (!["github", "google", "resend"].includes(account?.provider)) return false;
 
