@@ -68,22 +68,20 @@ export default async function CategoryPage({ params }) {
                 {/* Parent recipe card */}
                 <Link
                   href={`/recipes/${recipe.id}`}
-                  className="group flex h-40 rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200 overflow-hidden"
+                  className="group flex rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200 overflow-hidden"
                 >
-                  {/* Image */}
-                  <div className="w-1/3 flex-shrink-0 relative">
-                    {recipe.imageUrl ? (
+                  {/* Image panel — full width strip when image exists, thin accent when not */}
+                  {recipe.imageUrl ? (
+                    <div className="w-1/3 flex-shrink-0 relative min-h-[9rem]">
                       <img
                         src={recipe.imageUrl}
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover"
                       />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
-                        <span className="text-4xl opacity-30">🍽️</span>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="w-1.5 flex-shrink-0 bg-amber-200" />
+                  )}
 
                   {/* Content */}
                   <div className="flex flex-col justify-center px-6 py-4 min-w-0">
@@ -102,6 +100,9 @@ export default async function CategoryPage({ params }) {
                         </span>
                       )}
                     </div>
+                    <p className="mt-2 text-sm text-stone-400 group-hover:text-stone-500 transition-colors">
+                      View recipe →
+                    </p>
                   </div>
                 </Link>
 
