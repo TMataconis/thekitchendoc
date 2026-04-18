@@ -3,6 +3,7 @@ import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
 import { prisma } from "@/lib/prisma";
+import { createMinimalAdapter } from "@/lib/authAdapter";
 
 async function sendVerificationRequest({ identifier: email, url }) {
   const { Resend: ResendSDK } = await import("resend");
@@ -63,6 +64,7 @@ async function sendVerificationRequest({ identifier: email, url }) {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: createMinimalAdapter(),
   session: { strategy: "jwt" },
 
   providers: [
