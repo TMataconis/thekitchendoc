@@ -83,33 +83,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async signIn({ user, account }) {
-      if (!["github", "google", "resend"].includes(account?.provider)) return false;
-
-      const email = user.email;
-      if (!email) return false;
-
-      const existing = await prisma.user.findUnique({ where: { email } });
-
-      if (!existing) {
-        const count = await prisma.user.count();
-        await prisma.user.create({
-          data: {
-            email,
-            name: user.name ?? null,
-            image: user.image ?? null,
-            role: count === 0 ? "ADMIN" : "VIEWER",
-          },
-        });
-      } else if (account.provider !== "resend") {
-        // Keep name and image in sync with the OAuth profile on every sign-in
-        await prisma.user.update({
-          where: { email },
-          data: { name: user.name ?? null, image: user.image ?? null },
-        });
-      }
-
-      return true;
+    async signIn({ account }) {
+      // Adapter handles user creation; just gate on allowed providers
+      return ["github", "google", "resend"].includes(account?.provider);
     },
 
     async jwt({ token, account }) {

@@ -50,9 +50,16 @@ export function createMinimalAdapter() {
     },
 
     async createUser(user) {
+      // NextAuth calls this only after getUserByEmail returns null, but guard
+      // against races with upsert so we never create a duplicate.
       const count = await prisma.user.count();
-      const created = await prisma.user.create({
-        data: {
+      const created = await prisma.user.upsert({
+        where: { email: user.email },
+        update: {
+          name: user.name ?? undefined,
+          image: user.image ?? undefined,
+        },
+        create: {
           email: user.email,
           name: user.name ?? null,
           image: user.image ?? null,
