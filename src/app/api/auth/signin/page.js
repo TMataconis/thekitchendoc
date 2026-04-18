@@ -12,7 +12,7 @@ export default function SignInPage() {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    await signIn("resend", { email, redirect: false });
+    await signIn("resend", { email, callbackUrl: "/auth/success", redirect: false });
     setLoading(false);
     setSent(true);
   }
