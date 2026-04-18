@@ -82,5 +82,11 @@ export function createMinimalAdapter() {
     async linkAccount(account) {
       return account;
     },
+
+    async getAccount({ providerAccountId, provider }) {
+      // OAuth accounts are not stored in the DB — return null so NextAuth
+      // falls through to the signIn callback for user lookup
+      return null;
+    },
   };
 }
