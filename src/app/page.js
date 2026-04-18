@@ -23,7 +23,18 @@ function TagPills({ tags }) {
 
 export default async function Home() {
   const [categories, tags] = await Promise.all([
-    prisma.category.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.category.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: {
+        _count: { select: { recipes: true } },
+        recipes: {
+          where: { imageUrl: { not: "" } },
+          orderBy: { sortOrder: "asc" },
+          take: 1,
+          select: { imageUrl: true },
+        },
+      },
+    }),
     prisma.tag.findMany({
       orderBy: { name: "asc" },
       include: { _count: { select: { recipes: true } } },
@@ -34,38 +45,47 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-amber-50">
       <main className="max-w-5xl mx-auto px-6 py-14">
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold text-stone-800 tracking-tight">
-            Browse by Category
-          </h2>
-          <p className="mt-2 text-stone-500">
-            Pick a section to explore what&apos;s in the doc.
-          </p>
+        <div className="mb-10 text-center">
+          <h1 className="text-4xl font-bold text-stone-800 tracking-tight">
+            The Kitchen Doc
+          </h1>
+          <p className="mt-3 text-stone-500">Every recipe, all in one place.</p>
         </div>
 
         {categories.length === 0 ? (
           <p className="text-stone-400 italic">No categories yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/categories/${category.id}`}
-                className="group block rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200"
-              >
-                <div className="p-7">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 group-hover:bg-amber-200 transition-colors duration-200 flex items-center justify-center mb-4">
-                    <span className="text-xl">🍳</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {categories.map((category) => {
+              const imageUrl = category.recipes[0]?.imageUrl;
+              const count = category._count.recipes;
+              return (
+                <Link
+                  key={category.id}
+                  href={`/categories/${category.id}`}
+                  className="group relative block h-48 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+                >
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-amber-100" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 px-5 py-4">
+                    <p className="text-base font-semibold text-white leading-snug">
+                      {category.name}
+                    </p>
+                    <p className="text-xs text-white/70 mt-0.5">
+                      {count} recipe{count === 1 ? "" : "s"}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-semibold text-stone-800 group-hover:text-amber-700 transition-colors duration-200 leading-snug">
-                    {category.name}
-                  </h3>
-                  <p className="mt-2 text-sm text-stone-400 group-hover:text-stone-500 transition-colors duration-200">
-                    View recipes →
-                  </p>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         )}
       </main>
