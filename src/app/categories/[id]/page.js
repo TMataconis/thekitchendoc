@@ -31,6 +31,16 @@ export default async function CategoryPage({ params }) {
     },
   });
 
+  // Group variations under their parents, maintaining sortOrder within each group
+  const parents = recipes.filter((r) => !r.parentRecipeId);
+  const variationsByParent = recipes
+    .filter((r) => r.parentRecipeId)
+    .reduce((acc, r) => {
+      (acc[r.parentRecipeId] ??= []).push(r);
+      return acc;
+    }, {});
+  const sorted = parents.flatMap((p) => [p, ...(variationsByParent[p.id] ?? [])]);
+
   return (
     <div className="min-h-screen bg-amber-50">
       <main className="max-w-5xl mx-auto px-6 py-14">
@@ -44,17 +54,17 @@ export default async function CategoryPage({ params }) {
             {category.name}
           </h1>
           <p className="mt-2 text-stone-500">
-            {recipes.length === 0
+            {sorted.length === 0
               ? "No recipes yet."
-              : `${recipes.length} recipe${recipes.length === 1 ? "" : "s"}`}
+              : `${sorted.length} recipe${sorted.length === 1 ? "" : "s"}`}
           </p>
         </div>
 
-        {recipes.length === 0 ? (
+        {sorted.length === 0 ? (
           <p className="text-stone-400 italic">Nothing here yet.</p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {recipes.map((recipe) => (
+            {sorted.map((recipe) => (
               <Link
                 key={recipe.id}
                 href={`/recipes/${recipe.id}`}
