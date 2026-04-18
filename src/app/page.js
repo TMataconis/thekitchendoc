@@ -72,7 +72,9 @@ export default async function Home() {
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-amber-100" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center">
+                    <span className="text-6xl opacity-30">🍽️</span>
+                  </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 px-5 py-4">
