@@ -38,6 +38,11 @@ export default async function TagPage({ params }) {
     <div className="min-h-screen bg-amber-50">
       <main className="max-w-5xl mx-auto px-6 py-14">
         <div className="mb-10">
+          <nav className="mb-3">
+            <Link href="/tags" className="text-sm text-amber-600 hover:text-amber-700 transition-colors">
+              ← All Tags
+            </Link>
+          </nav>
           <div className="inline-flex items-center rounded-full bg-amber-100 border border-amber-200 px-3 py-1 text-sm font-medium text-amber-700 mb-4">
             tag
           </div>
