@@ -1,9 +1,34 @@
 import { prisma } from "@/lib/prisma";
 
+function toUser(user) {
+  return {
+    id: String(user.id),
+    email: user.email,
+    name: user.name ?? null,
+    image: user.image ?? null,
+    emailVerified: null,
+  };
+}
+
+function toToken(vt) {
+  return {
+    identifier: vt.identifier,
+    token: vt.token,
+    expires: vt.expires,
+  };
+}
+
 export function createMinimalAdapter() {
   return {
     async createVerificationToken(token) {
-      return prisma.verificationToken.create({ data: token });
+      const vt = await prisma.verificationToken.create({
+        data: {
+          identifier: token.identifier,
+          token: token.token,
+          expires: token.expires,
+        },
+      });
+      return toToken(vt);
     },
 
     async useVerificationToken({ identifier, token }) {
@@ -11,7 +36,8 @@ export function createMinimalAdapter() {
         const vt = await prisma.verificationToken.delete({
           where: { identifier_token: { identifier, token } },
         });
-        return vt.expires < new Date() ? null : vt;
+        if (vt.expires < new Date()) return null;
+        return toToken(vt);
       } catch {
         return null;
       }
@@ -20,7 +46,7 @@ export function createMinimalAdapter() {
     async getUserByEmail(email) {
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) return null;
-      return { ...user, id: String(user.id), emailVerified: null };
+      return toUser(user);
     },
 
     async createUser(user) {
@@ -33,13 +59,13 @@ export function createMinimalAdapter() {
           role: count === 0 ? "ADMIN" : "VIEWER",
         },
       });
-      return { ...created, id: String(created.id), emailVerified: null };
+      return toUser(created);
     },
 
     async getUser(id) {
       const user = await prisma.user.findUnique({ where: { id: Number(id) } });
       if (!user) return null;
-      return { ...user, id: String(user.id), emailVerified: null };
+      return toUser(user);
     },
   };
 }
