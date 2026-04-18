@@ -91,8 +91,15 @@ export function createMinimalAdapter() {
     },
 
     async getAccount({ providerAccountId, provider }) {
-      // OAuth accounts are not stored in the DB — return null so NextAuth
-      // falls through to the signIn callback for user lookup
+      return null;
+    },
+
+    async getUserByAccount({ providerAccountId, provider }) {
+      // No accounts table — return null so NextAuth falls through to getUserByEmail
+      return null;
+    },
+
+    async deleteAccount({ providerAccountId, provider }) {
       return null;
     },
   };
