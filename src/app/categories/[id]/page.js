@@ -62,15 +62,15 @@ export default async function CategoryPage({ params }) {
         {recipes.length === 0 ? (
           <p className="text-stone-400 italic">Nothing here yet.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
             {recipes.map((recipe) => {
-              const fullSpan = recipe.variations.length >= 3;
+              const hasVariations = recipe.variations.length > 0;
               return (
-                <div key={recipe.id} className={fullSpan ? "sm:col-span-2" : ""}>
+                <div key={recipe.id} className={hasVariations ? "sm:col-span-2" : "flex flex-col"}>
                   {/* Parent recipe card */}
                   <Link
                     href={`/recipes/${recipe.id}`}
-                    className="group flex rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200 overflow-hidden"
+                    className="group flex h-full rounded-2xl bg-white border border-amber-100 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200 overflow-hidden"
                   >
                     {/* Image panel — full panel when image exists, thin accent when not */}
                     {recipe.imageUrl ? (
