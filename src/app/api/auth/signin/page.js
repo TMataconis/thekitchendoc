@@ -12,7 +12,11 @@ export default function SignInPage() {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
-    await signIn("resend", { email, callbackUrl: "/auth/success", redirect: false });
+    await fetch("/api/auth/magic-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
     setLoading(false);
     setSent(true);
   }
