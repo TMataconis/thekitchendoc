@@ -27,7 +27,7 @@ export default async function CategoryPage({ params }) {
       imageUrl: true,
       servings: true,
       parentRecipeId: true,
-      parent: { select: { title: true } },
+      parentRecipe: { select: { title: true } },
     },
   });
 
@@ -83,9 +83,9 @@ export default async function CategoryPage({ params }) {
                   {recipe.servings && (
                     <p className="mt-0.5 text-xs text-stone-400">{recipe.servings}</p>
                   )}
-                  {recipe.parentRecipeId && recipe.parent && (
+                  {recipe.parentRecipeId && recipe.parentRecipe && (
                     <p className="mt-1 text-xs text-stone-400 italic">
-                      Variation of {recipe.parent.title}
+                      Variation of {recipe.parentRecipe.title}
                     </p>
                   )}
                 </div>
