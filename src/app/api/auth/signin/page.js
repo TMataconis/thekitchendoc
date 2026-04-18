@@ -1,8 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 
 export default function SignInPage() {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleMagicLink(e) {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setLoading(true);
+    await signIn("resend", { email, redirect: false });
+    setLoading(false);
+    setSent(true);
+  }
+
   return (
     <div className="min-h-screen bg-amber-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
@@ -19,9 +33,43 @@ export default function SignInPage() {
             Your personal recipe collection. Sign in to access the kitchen.
           </p>
 
+          {sent ? (
+            <div className="mt-8 w-full rounded-xl bg-amber-50 border border-amber-200 px-5 py-4 text-sm text-amber-800 text-left">
+              <p className="font-semibold">Check your email</p>
+              <p className="mt-1 text-amber-700">
+                A sign-in link has been sent to <span className="font-medium">{email}</span>.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleMagicLink} className="mt-8 w-full">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className="w-full rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-shadow"
+              />
+              <button
+                type="submit"
+                disabled={loading || !email.trim()}
+                className="mt-3 w-full rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-white hover:bg-amber-600 active:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? "Sending…" : "Send magic link"}
+              </button>
+            </form>
+          )}
+
+          {/* Divider */}
+          <div className="mt-6 w-full flex items-center gap-3">
+            <div className="flex-1 h-px bg-stone-100" />
+            <span className="text-xs text-stone-400">or</span>
+            <div className="flex-1 h-px bg-stone-100" />
+          </div>
+
           <button
             onClick={() => signIn("google", { redirectTo: "/" })}
-            className="mt-8 w-full flex items-center justify-center gap-3 rounded-xl bg-white border border-stone-200 px-5 py-3 text-sm font-semibold text-stone-700 hover:bg-stone-50 active:bg-stone-100 transition-colors"
+            className="mt-4 w-full flex items-center justify-center gap-3 rounded-xl bg-white border border-stone-200 px-5 py-3 text-sm font-semibold text-stone-700 hover:bg-stone-50 active:bg-stone-100 transition-colors"
           >
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
