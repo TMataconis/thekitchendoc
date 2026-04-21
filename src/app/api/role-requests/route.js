@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = "thmsmtcns@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 export async function POST(request) {
   const session = await auth();
