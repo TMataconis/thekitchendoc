@@ -8,6 +8,7 @@ const links = [
   { href: "/admin/recipes", label: "All Recipes", shortLabel: "Recipes", icon: "📄" },
   { href: "/admin/categories", label: "Categories", shortLabel: "Categories", icon: "🗂" },
   { href: "/admin/users", label: "Users", shortLabel: "Users", icon: "👥" },
+  { href: "/admin/requests", label: "Requests", shortLabel: "Requests", icon: "📋" },
 ];
 
 export default function AdminNav({ variant = "sidebar" }) {

@@ -3,6 +3,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import RoleRequestSection from "./RoleRequestSection";
 
 export const metadata = {
   title: "My Profile — The Kitchen Doc",
@@ -27,17 +28,23 @@ export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/");
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      _count: {
-        select: {
-          recipes: { where: { parentRecipeId: null } },
-          favorites: true,
+  const [user, existingRequest] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: {
+        _count: {
+          select: {
+            recipes: { where: { parentRecipeId: null } },
+            favorites: true,
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.roleRequest.findFirst({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
 
   if (!user) redirect("/");
 
@@ -201,6 +208,8 @@ export default async function ProfilePage() {
             </Link>
           )}
         </div>
+
+        <RoleRequestSection currentRole={user.role} existingRequest={existingRequest} />
       </main>
 
       <footer className="max-w-lg mx-auto px-6 py-8 mt-8 border-t border-amber-100">

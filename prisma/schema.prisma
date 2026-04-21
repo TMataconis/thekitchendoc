@@ -23,6 +23,7 @@ model User {
   createdAt DateTime   @default(now())
   recipes   Recipe[]
   favorites Favorite[]
+  roleRequests RoleRequest[] 
 
   @@map("users")
 }
@@ -144,4 +145,18 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model RoleRequest {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requestedRole Role
+  message       String?
+  status        String    @default("PENDING")
+  adminComment  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("role_requests")
 }
