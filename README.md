@@ -106,8 +106,6 @@ These are one-off CJS scripts for bulk data import. Run them in order:
 | `CONTRIBUTOR` | Access to `/admin` recipe management. Can create, edit, and manage recipes. |
 | `VIEWER` | Read-only access to recipes, categories, and tags. Can submit a role upgrade request from their profile. |
 
-The first user to sign up via magic link is automatically assigned `ADMIN`. OAuth users are assigned `VIEWER` unless manually promoted.
-
 ## Features
 
 - **Homepage** — Category grid with cover images, gradient overlays, and recipe counts
