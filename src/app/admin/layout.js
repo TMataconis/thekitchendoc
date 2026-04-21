@@ -9,9 +9,9 @@ export const metadata = {
 export default async function AdminLayout({ children }) {
   const session = await auth();
 
-  if (!session?.user || session.user.role !== "ADMIN") {
-    redirect("/");
-  }
+  const realRole = session?.user?.realRole ?? session?.user?.role;
+  if (!session?.user) redirect("/api/auth/signin");
+  if (realRole !== "ADMIN" && realRole !== "CONTRIBUTOR") redirect("/forbidden");
 
   return (
     <div className="flex flex-col flex-1 min-h-0 md:flex-row">
