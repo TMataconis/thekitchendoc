@@ -22,7 +22,7 @@ export const proxy = auth(function (req) {
   if (pathname.startsWith("/admin")) {
     const realRole = session.user?.realRole ?? session.user?.role;
     if (realRole !== "ADMIN" && realRole !== "CONTRIBUTOR") {
-      return new NextResponse("Forbidden", { status: 403 });
+      return NextResponse.redirect(new URL("/forbidden", req.url));
     }
   }
 
