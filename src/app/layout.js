@@ -28,7 +28,7 @@ export default async function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased overflow-x-hidden`}
     >
       <body className="min-h-full flex flex-col w-full overflow-x-hidden">
         <header id="site-header" className="border-b border-amber-200 bg-white">
