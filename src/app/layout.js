@@ -31,7 +31,7 @@ export default async function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col w-full overflow-x-hidden">
-        <header className="border-b border-amber-200 bg-white">
+        <header id="site-header" className="border-b border-amber-200 bg-white">
           <div className="max-w-5xl mx-auto px-4 md:px-8 h-14 flex items-center gap-3">
             {/* Logo — always visible */}
             <Link
@@ -105,9 +105,11 @@ export default async function RootLayout({ children }) {
           </div>
         </header>
 
-        {session?.user?.realRole === "ADMIN" && session.user.role !== session.user.realRole && (
-          <PreviewBanner role={session.user.role} />
-        )}
+        <div id="preview-banner">
+          {session?.user?.realRole === "ADMIN" && session.user.role !== session.user.realRole && (
+            <PreviewBanner role={session.user.role} />
+          )}
+        </div>
         {children}
       </body>
     </html>

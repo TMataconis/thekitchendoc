@@ -53,6 +53,7 @@ export default async function PrintPage({ params }) {
   return (
     <>
       <style>{`
+        #site-header, #preview-banner { display: none !important; }
         @media print {
           .no-print { display: none !important; }
           body { background: white; }
@@ -62,18 +63,18 @@ export default async function PrintPage({ params }) {
       <div className="min-h-screen bg-white">
         <main className="max-w-2xl mx-auto px-8 py-10">
 
-          {/* Top bar: branding left, actions right */}
-          <div className="flex items-start justify-between mb-8">
-            <span className="text-xs font-semibold tracking-widest uppercase text-stone-400">
-              The Kitchen Doc
-            </span>
-            <div className="no-print flex items-center gap-2">
-              <FavoriteButton
-                recipeId={recipe.id}
-                initialFavorited={isFavorited}
-              />
-              <PrintButton />
-            </div>
+          {/* Branding */}
+          <p className="text-xs font-semibold tracking-widest uppercase text-stone-400 mb-4">
+            The Kitchen Doc
+          </p>
+
+          {/* Centered action buttons */}
+          <div className="no-print flex items-center justify-center gap-3 mb-8">
+            <FavoriteButton
+              recipeId={recipe.id}
+              initialFavorited={isFavorited}
+            />
+            <PrintButton />
           </div>
 
           {/* Title */}
@@ -103,7 +104,7 @@ export default async function PrintPage({ params }) {
                         {group.name}
                       </h3>
                     )}
-                    <ul className="space-y-1.5">
+                    <ul className="list-disc pl-5 space-y-1.5">
                       {group.ingredients.map((ing) => (
                         <li key={ing.id} className="flex flex-col">
                           <span className="text-sm text-stone-800">
