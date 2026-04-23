@@ -104,16 +104,14 @@ export default async function PrintPage({ params }) {
                         {group.name}
                       </h3>
                     )}
-                    <ul className="list-disc pl-5 space-y-1.5">
+                    <ul className="list-disc pl-6 space-y-1.5">
                       {group.ingredients.map((ing) => (
-                        <li key={ing.id} className="flex flex-col">
-                          <span className="text-sm text-stone-800">
-                            {[ing.amount, ing.unit, ing.name]
-                              .filter(Boolean)
-                              .join(" ")}
-                          </span>
+                        <li key={ing.id} className="text-sm text-stone-800">
+                          {[ing.amount, ing.unit, ing.name]
+                            .filter(Boolean)
+                            .join(" ")}
                           {ing.note && (
-                            <span className="text-xs text-stone-400 mt-0.5">
+                            <span className="block text-xs text-stone-400 mt-0.5">
                               {ing.note}
                             </span>
                           )}
