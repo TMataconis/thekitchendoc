@@ -190,7 +190,7 @@ export default function PersonalNotes({ recipeId }) {
   }
 
   return (
-    <section className="mt-10">
+    <section className="mt-10 overflow-hidden">
       <div className="flex items-center gap-2 mb-4">
         <h2 className="text-base font-semibold text-stone-700">My Notes</h2>
         <span className="text-xs font-medium text-stone-400 border border-stone-200 rounded-full px-2 py-0.5">
