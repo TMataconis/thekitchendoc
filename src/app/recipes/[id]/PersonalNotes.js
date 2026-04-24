@@ -66,7 +66,7 @@ function NoteCard({ note, onDelete, onSave }) {
         </>
       ) : (
         <div className="flex items-start gap-3">
-          <p className="flex-1 text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">
+          <p className="flex-1 min-w-0 text-sm text-stone-700 leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
             {note.content}
           </p>
           <div className="flex-shrink-0 flex items-center gap-1 mt-0.5">
