@@ -102,6 +102,7 @@ export default function RecipeBody({ recipe, isFavorited, user, recipeId }) {
     instructions.filter((i) => i.parentInstructionId === null);
 
   return (
+    <>
     <div className="after:content-[''] after:block after:clear-both">
       {/* Float image — right on md+, stacked on mobile */}
       {recipe.imageUrl && (
@@ -215,8 +216,6 @@ export default function RecipeBody({ recipe, isFavorited, user, recipeId }) {
         </p>
       )}
 
-      <PersonalNotes recipeId={recipe.id} />
-
       {/* Ingredients */}
       {recipe.ingredientGroups.length > 0 && (
         <section className="mt-12">
@@ -319,5 +318,7 @@ export default function RecipeBody({ recipe, isFavorited, user, recipeId }) {
         </section>
       )}
     </div>
+    <PersonalNotes recipeId={recipe.id} />
+    </>
   );
 }
