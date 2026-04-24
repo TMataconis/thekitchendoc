@@ -39,7 +39,7 @@ function NoteCard({ note, onDelete, onSave }) {
   }
 
   return (
-    <div className="rounded-xl border border-stone-200 bg-white px-4 py-3 shadow-sm">
+    <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3">
       {editing ? (
         <>
           <textarea
