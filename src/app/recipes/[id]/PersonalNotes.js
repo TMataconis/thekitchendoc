@@ -105,6 +105,7 @@ function NoteCard({ note, onDelete, onSave }) {
 
 export default function PersonalNotes({ recipeId }) {
   const [notes, setNotes] = useState(null); // null = loading
+  const [adding, setAdding] = useState(false);
   const [draft, setDraft] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const textareaRef = useRef(null);
@@ -133,6 +134,7 @@ export default function PersonalNotes({ recipeId }) {
     };
     setNotes((prev) => [tempNote, ...(prev ?? [])]);
     setDraft("");
+    setAdding(false);
     setSubmitting(true);
 
     try {
@@ -194,6 +196,17 @@ export default function PersonalNotes({ recipeId }) {
         <span className="text-xs font-medium text-stone-400 border border-stone-200 rounded-full px-2 py-0.5">
           private
         </span>
+        {!adding && (
+          <button
+            onClick={() => { setAdding(true); setTimeout(() => textareaRef.current?.focus(), 0); }}
+            className="ml-1 inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add Note
+          </button>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -213,26 +226,35 @@ export default function PersonalNotes({ recipeId }) {
         ))}
       </div>
 
-      {/* Add note form */}
-      <form onSubmit={handleAdd} className="mt-4">
-        <textarea
-          ref={textareaRef}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder="Add a note…"
-          rows={3}
-          className="w-full resize-none rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100 transition-shadow"
-        />
-        <div className="mt-2 flex justify-end">
-          <button
-            type="submit"
-            disabled={!draft.trim() || submitting}
-            className="rounded-full bg-amber-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Add Note
-          </button>
-        </div>
-      </form>
+      {/* Add note form — revealed by the heading button */}
+      {adding && (
+        <form onSubmit={handleAdd} className="mt-3">
+          <textarea
+            ref={textareaRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="Add a note…"
+            rows={3}
+            className="w-full resize-none rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-100 transition-shadow"
+          />
+          <div className="mt-2 flex gap-2 justify-end">
+            <button
+              type="button"
+              onClick={() => { setAdding(false); setDraft(""); }}
+              className="rounded-full border border-stone-200 px-3 py-1.5 text-xs font-medium text-stone-500 hover:bg-stone-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!draft.trim() || submitting}
+              className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Save
+            </button>
+          </div>
+        </form>
+      )}
     </section>
   );
 }
