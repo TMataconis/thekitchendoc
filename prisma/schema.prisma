@@ -24,6 +24,7 @@ model User {
   recipes   Recipe[]
   favorites Favorite[]
   roleRequests RoleRequest[] 
+  personalNotes PersonalNote[]
 
   @@map("users")
 }
@@ -70,6 +71,7 @@ model Recipe {
   ingredientGroups  IngredientGroup[]
   instructionGroups InstructionGroup[]
   favorites         Favorite[]
+  personalNotes PersonalNote[]
 
   @@map("recipes")
 }
@@ -159,4 +161,17 @@ model RoleRequest {
   updatedAt     DateTime  @updatedAt
 
   @@map("role_requests")
+}
+
+model PersonalNote {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId  Int
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("personal_notes")
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import FavoriteButton from "./FavoriteButton";
+import PersonalNotes from "./PersonalNotes";
 
 // ── Fraction helpers ──────────────────────────────────────────────────────────
 
@@ -91,7 +92,7 @@ function getServingsLabel(str) {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function RecipeBody({ recipe, isFavorited, user }) {
+export default function RecipeBody({ recipe, isFavorited, user, recipeId }) {
   const baseServings = parseBaseServings(recipe.servings);
   const canScale = baseServings !== null;
   const [servings, setServings] = useState(baseServings ?? 1);
@@ -213,6 +214,8 @@ export default function RecipeBody({ recipe, isFavorited, user }) {
           {recipe.notes}
         </p>
       )}
+
+      <PersonalNotes recipeId={recipe.id} />
 
       {/* Ingredients */}
       {recipe.ingredientGroups.length > 0 && (
